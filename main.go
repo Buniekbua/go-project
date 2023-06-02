@@ -7,6 +7,7 @@ import (
 	"github.com/buniekbua/gousers/handlers"
 	"github.com/buniekbua/gousers/repositories"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 )
 
 func main() {
@@ -20,6 +21,9 @@ func main() {
 	userHandler := handlers.NewUserHandler(userRepo)
 
 	e := echo.New()
+
+	e.Use(middleware.Logger())
+	e.Use(middleware.Recover())
 
 	e.GET("/users", userHandler.GetAllUsers)
 	e.POST("/users", userHandler.CreateUser)
