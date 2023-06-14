@@ -39,7 +39,19 @@ func (ur *UserRepository) CreateUser(user *models.User) error {
 }
 
 func (ur *UserRepository) GetUserByID(id int) (*models.User, error) {
-	return nil, nil
+	query := `SELECT id, first_name, last_name, email, created_at, modified_at 
+	FROM users WHERE id = $1;`
+
+	row := ur.db.QueryRow(query, id)
+
+	user := &models.User{}
+	err := row.Scan(&user.ID, &user.FirstName, &user.LastName,
+		&user.Email, &user.CreatedAt, &user.ModifiedAt)
+	if err != nil {
+		return nil, err
+	}
+
+	return user, nil
 }
 
 func (ur *UserRepository) UpdateUser(id int, user *models.User) error {
@@ -85,5 +97,16 @@ func (ur *UserRepository) GetAllUsers() ([]models.User, error) {
 }
 
 func (ur *UserRepository) DeleteUser(id int) error {
+	query := `DELETE FROM users WHERE id = $1;`
+
+	_, err := ur.db.Exec(query, id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
+
+//func (ur *UserRepository) GetUserByEmail(email string) (*models.User, error) {
+//query := `SELECT * FROM users WHERE email = $1`
+
+//}
